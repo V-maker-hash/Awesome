@@ -1,8 +1,7 @@
-package com.example.demo.controllers;
-
+package com.example.demo.controller;
 import com.example.demo.domain.Message;
 import com.example.demo.domain.User;
-import com.example.demo.repositories.MessageRepository;
+import com.example.demo.repos.MessageRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,7 +15,7 @@ import java.util.Map;
 @Controller
 public class MainController {
     @Autowired
-    private MessageRepository messageRepository;
+    private MessageRepo messageRepo;
 
     @GetMapping("/")
     public String greeting(Map<String, Object> model) {
@@ -25,12 +24,12 @@ public class MainController {
 
     @GetMapping("/main")
     public String main(@RequestParam(required = false, defaultValue = "") String filter, Model model) {
-        Iterable<Message> messages = messageRepository.findAll();
+        Iterable<Message> messages = messageRepo.findAll();
 
         if (filter != null && !filter.isEmpty()) {
-            messages = messageRepository.findByTag(filter);
+            messages = messageRepo.findByTag(filter);
         } else {
-            messages = messageRepository.findAll();
+            messages = messageRepo.findAll();
         }
 
         model.addAttribute("messages", messages);
@@ -47,9 +46,9 @@ public class MainController {
     ) {
         Message message = new Message(text, tag, user);
 
-        messageRepository.save(message);
+        messageRepo.save(message);
 
-        Iterable<Message> messages = messageRepository.findAll();
+        Iterable<Message> messages = messageRepo.findAll();
 
         model.put("messages", messages);
 
